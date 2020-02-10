@@ -53,6 +53,14 @@ def user_entering_name(message):
                                       "\nNow tell me your age, please?")
     dbworker.set_state(message.chat.id, config.States.S_ENTER_AGE.value)
 
+@bot.message_handler(commands=['help'])
+def cmd_help(message):
+    bot.send_message(message.chat.id, "Here are commands: "
+                                      "\n \n🔹 /dialog - start dialog"
+                                      "\n🔹 /reset - reset dialog"
+                                      "\n🔹 /help")
+
+
 @bot.message_handler(func=lambda message: dbworker.get_current_state(message.chat.id) == config.States.S_ENTER_AGE.value)
 def user_entering_age(message):
     # Here we’ll do a check
@@ -73,14 +81,6 @@ def user_entering_age(message):
                                           "\nLet me know a little bit more about you ☺️"
                                           "\nAre you a male or female?")
         #dbworker.set_state(message.chat.id, config.States.S_SEND_PIC.value)
-
-@bot.message_handler(commands=['help'])
-def cmd_help(message):
-    bot.send_message(message.chat.id, "Here are commands: "
-                                      "\n \n🔹 /dialog - start dialog"
-                                      "\n🔹/reset - reset dialog"
-                                      "\n🔹 /help")
-
 
 alice_stickers = [
     'CAACAgIAAxkBAAIlEl5ATnk3_o-kRhc5rxKG6Jg04CMiAAKGAQACW90SCBDIKAipD9lUGAQ',
@@ -123,6 +123,7 @@ def send_sticker(message: Message):
 @bot.message_handler(func = lambda message: True)
 def upper(message: Message):
     bot.reply_to(message, message.text.upper())
+
 
 
 
