@@ -1,16 +1,86 @@
+# coding: utf-8
+
 import os
 import random
+import config
+import dbworker
 
 import telebot
 from telebot.types import Message
 
 
-#TOKEN = '1004026853:AAH7TyM-PhWKoR8j0XZcraIyKTIif0pqFbs'
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(config.TOKEN)
 
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.send_message(message.chat.id, "Hello from Wonderland! 💙")
+def cmd_start(message):
+    bot.send_message(message.chat.id, "Hello from Wonderland! 💙"
+                                      "\nLet's start  our journey 🌹 and try to find Cheshire Cat 🐱"
+                                      "\n \nHere are some commands: "
+                                      "\n🔹 /dialog - start dialog"
+                                      "\n🔹 /reset - reset dialog"
+                                      "\n🔹 /help")
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIlhV5BcyAnaBGAcJysDmF3JgtghWcIAAKeAQACW90SCDdyny47NvZFGAQ')
+
+# Start of dialogue
+@bot.message_handler(commands=["dialog"])
+def cmd_start_dialog(message):
+    state = dbworker.get_current_state(message.chat.id)
+    if state == config.States.S_ENTER_NAME.value:
+        bot.send_message(message.chat.id, "It seems that someone promised to send his name, but did not do it 🙁 "
+                                          "I’m still waiting ...")
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIlol5BtoxQy51l0C_qagFDqnK0pB8FAAKRAQACW90SCDRGaQI0kBg5GAQ')
+    elif state == config.States.S_ENTER_AGE.value:
+        bot.send_message(message.chat.id, "It seems that someone promised to send his age, but did not do it 😔 "
+                                          "I’m waiting ...")
+        bot.send_sticker(message.chat.id, 'CAACAgQAAxkBAAIlpF5BtuCdB9st0kkrWt4LXxIjaRvwAAIgAQACu-RJAAELHSxfy9fdZxgE')
+    #elif state == config.States.S_SEND_PIC.value:
+        #bot.send_message(message.chat.id, "Кажется, кто-то обещал отправить картинку, но так и не сделал этого :( Жду...")
+    else:  # Под "остальным" понимаем состояние "0" - начало диалога
+        bot.send_message(message.chat.id, "So what is your name?")
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIlkV5BqGBycjbQb4Ova2H1OGzxBfchAAKVAQACW90SCCDte3BgeUheGAQ')
+        dbworker.set_state(message.chat.id, config.States.S_ENTER_NAME.value)
+
+# Using the / reset command, we will reset the states, returning to the beginning of the dialogue
+@bot.message_handler(commands=["reset"])
+def cmd_reset(message):
+    bot.send_message(message.chat.id, "Well, let's start in a new way. What's your name?")
+    dbworker.set_state(message.chat.id, config.States.S_ENTER_NAME.value)
+
+@bot.message_handler(func=lambda message: dbworker.get_current_state(message.chat.id) == config.States.S_ENTER_NAME.value)
+def user_entering_name(message):
+    # In the case of the name don’t check anything
+    bot.send_message(message.chat.id, "Good name, I'll remember! "
+                                      "\nNow tell me your age, please?")
+    dbworker.set_state(message.chat.id, config.States.S_ENTER_AGE.value)
+
+@bot.message_handler(func=lambda message: dbworker.get_current_state(message.chat.id) == config.States.S_ENTER_AGE.value)
+def user_entering_age(message):
+    # Here we’ll do a check
+    if not message.text.isdigit():
+        # Состояние не меняем, поэтому только выводим сообщение об ошибке и ждём дальше
+        bot.send_message(message.chat.id, "Something get wrong 🤔 Try again!")
+        bot.send_sticker(message.chat.id, 'CAACAgQAAxkBAAIlml5BssgRiup761KZTm_eAfnNwhmQAAIeAQACu-RJAAEYZh0WQkIVsRgE')
+        return
+    # At this stage, we are sure that message.text can be converted to a number, so we do not risk anything
+    if int(message.text) < 10 or int(message.text) > 100:
+        bot.send_message(message.chat.id, "What a strange age! I don't believe you! Answer honestly 🙃")
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIloF5BtAPCWDpC4NmBuqPSqgN9dCz1AAKWAQACW90SCIRDegskrgwjGAQ')
+        return
+    else:
+        # Age entered correctly, can go further
+        bot.send_message(message.chat.id, "Once upon a time, I was the same age as you do ... oh ... "
+                                          "However, we will not be distracted. "
+                                          "\nLet me know a little bit more about you ☺️"
+                                          "\nAre you a male or female?")
+        #dbworker.set_state(message.chat.id, config.States.S_SEND_PIC.value)
+
+@bot.message_handler(commands=['help'])
+def cmd_help(message):
+    bot.send_message(message.chat.id, "Here are commands: "
+                                      "\n \n🔹 /dialog - start dialog"
+                                      "\n🔹/reset - reset dialog"
+                                      "\n🔹 /help")
+
 
 alice_stickers = [
     'CAACAgIAAxkBAAIlEl5ATnk3_o-kRhc5rxKG6Jg04CMiAAKGAQACW90SCBDIKAipD9lUGAQ',
