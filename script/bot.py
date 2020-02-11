@@ -33,9 +33,19 @@ def cmd_start_dialog(message):
         bot.send_message(message.chat.id, "It seems that someone promised to send his age, but did not do it 😔 "
                                           "I’m waiting ...")
         bot.send_sticker(message.chat.id, 'CAACAgQAAxkBAAIlpF5BtuCdB9st0kkrWt4LXxIjaRvwAAIgAQACu-RJAAELHSxfy9fdZxgE')
-    #elif state == config.States.S_SEND_PIC.value:
-        #bot.send_message(message.chat.id, "Кажется, кто-то обещал отправить картинку, но так и не сделал этого :( Жду...")
-    else:  # Под "остальным" понимаем состояние "0" - начало диалога
+    elif state == config.States.S_SEND_LOCATION.value:
+        bot.send_message(message.chat.id, "It seems that someone promised to send where is he from 📍"
+                                          "I’m waiting ...")
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAImCl5DGV2OOHfY0I68srfw0a4IUhpGAAKdAQACW90SCGDKljOL018mGAQ')
+    elif state == config.States.S_SEND_PIC.value:
+        bot.send_message(message.chat.id, "It seems that someone promised to send a picture"
+                                          "I’m waiting ...")
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAImDF5DGXPYz0MjX0FPtdZuzXz02DIXAAKhAQACW90SCK-NOiy7s1mWGAQ')
+    elif state == config.States.S_SEND_MOVIE.value:
+        bot.send_message(message.chat.id, "It seems that someone promised to send favourite movie 🎥🎞"
+                                          "I’m waiting ...")
+        bot.send_sticker(message.chat.id, 'CAACAgQAAxkBAAImEl5DHM3pQvQrIzQFJvNrd0vQw3TzAAKXAQACu-RJAAHczGY8BnvXjxgE')
+    else:  # By "else" mean the state "0" - the beginning of the dialogue
         bot.send_message(message.chat.id, "So what is your name?")
         bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIlkV5BqGBycjbQb4Ova2H1OGzxBfchAAKVAQACW90SCCDte3BgeUheGAQ')
         dbworker.set_state(message.chat.id, config.States.S_ENTER_NAME.value)
@@ -57,7 +67,7 @@ def user_entering_name(message):
 def cmd_help(message):
     bot.send_message(message.chat.id, "Here are commands: "
                                       "\n \n🔹 /dialog - start dialog"
-                                      "\n🔹/reset - reset dialog"
+                                      "\n🔹 /reset - reset dialog"
                                       "\n🔹 /help")
     dbworker.set_state(message.chat.id, config.States.S_START.value)
 
@@ -87,8 +97,25 @@ def user_entering_age(message):
                                           config.States.S_SEND_LOCATION.value)
 def user_sending_location(message):
     bot.send_message(message.chat.id, "Wow! It seems far away from Wonderland..."
-                                      "\nSend me a picture of your favorite color?")
+                                      "\nSend me any picture you like 😊")
+    dbworker.set_state(message.chat.id, config.States.S_SEND_PIC.value)
+
+@bot.message_handler(content_types=["photo"],
+                     func=lambda message: dbworker.get_current_state(message.chat.id) == config.States.S_SEND_PIC.value)
+def user_sending_photo(message):
+    # We already checked that this is a photo in the handler, no additional actions are needed.
+    bot.send_message(message.chat.id, "That's nice!"
+                                      "\nWhat is your favourite movie? 🎥🎞")
+    dbworker.set_state(message.chat.id, config.States.S_SEND_MOVIE.value)
+
+@bot.message_handler(func=lambda message: dbworker.get_current_state(message.chat.id) ==
+                                          config.States.S_SEND_MOVIE.value)
+def user_sending_location(message):
+    bot.send_message(message.chat.id, "Excellent! 🤗"
+                                      "\n\nIf you would like to chat again - send the command /dialog.")
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAImEF5DHKHzt_ncvcof707s0hmWXTq9AAKJAQACW90SCCBacVSfHiAlGAQ')
     dbworker.set_state(message.chat.id, config.States.S_START.value)
+
 
 alice_stickers = [
     'CAACAgIAAxkBAAIlEl5ATnk3_o-kRhc5rxKG6Jg04CMiAAKGAQACW90SCBDIKAipD9lUGAQ',
@@ -126,13 +153,7 @@ alice_stickers = [
 def send_sticker(message: Message):
     bot.send_sticker(message.chat.id, random.choice(alice_stickers))
 
-# bot.send_message(393576580, 'Hi!')
-
-@bot.message_handler(func = lambda message: True)
-def upper(message: Message):
-    bot.reply_to(message, message.text.upper())
 
 
-
-
-bot.polling()
+if __name__ == "__main__":
+    bot.infinity_polling()
