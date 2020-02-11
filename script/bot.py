@@ -57,8 +57,9 @@ def user_entering_name(message):
 def cmd_help(message):
     bot.send_message(message.chat.id, "Here are commands: "
                                       "\n \n🔹 /dialog - start dialog"
-                                      "\n🔹 /reset - reset dialog"
+                                      "\n🔹/reset - reset dialog"
                                       "\n🔹 /help")
+    dbworker.set_state(message.chat.id, config.States.S_START.value)
 
 
 @bot.message_handler(func=lambda message: dbworker.get_current_state(message.chat.id) == config.States.S_ENTER_AGE.value)
@@ -79,8 +80,15 @@ def user_entering_age(message):
         bot.send_message(message.chat.id, "Once upon a time, I was the same age as you do ... oh ... "
                                           "However, we will not be distracted. "
                                           "\nLet me know a little bit more about you ☺️"
-                                          "\nAre you a male or female?")
-        #dbworker.set_state(message.chat.id, config.States.S_SEND_PIC.value)
+                                          "\nWhere are you from?")
+        dbworker.set_state(message.chat.id, config.States.S_SEND_LOCATION.value)
+
+@bot.message_handler(func=lambda message: dbworker.get_current_state(message.chat.id) ==
+                                          config.States.S_SEND_LOCATION.value)
+def user_sending_location(message):
+    bot.send_message(message.chat.id, "Wow! It seems far away from Wonderland..."
+                                      "\nSend me a picture of your favorite color?")
+    dbworker.set_state(message.chat.id, config.States.S_START.value)
 
 alice_stickers = [
     'CAACAgIAAxkBAAIlEl5ATnk3_o-kRhc5rxKG6Jg04CMiAAKGAQACW90SCBDIKAipD9lUGAQ',
