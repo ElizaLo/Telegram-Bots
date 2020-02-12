@@ -132,7 +132,7 @@ def user_sending_location(message):
 # ----------- Recognition ---------------
 
 bot_text = '''
-Hi once more! 😊
+✨ Hi once more! ✨
 
 So let's classify images using neural networks ✨
 
@@ -145,6 +145,7 @@ result_storage_path = 'tmp'
 @bot.message_handler(commands=['recognition'])
 def send_welcome(message):
  bot.send_message(message.chat.id, bot_text)
+ bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAImW15EJTzzVK8Zic1x_EAqp4yLnEQJAAKXAQACW90SCCusG2d1kyqNGAQ')
 
 @bot.message_handler(content_types=['photo'])
 def handle(message):
@@ -192,7 +193,7 @@ def save_image_from_message(message):
 
   image_id = get_image_id_from_message(message)
 
-  bot.send_message(cid, '🌹 I am nalyzing image, be patient! 🌹 ')
+  bot.send_message(cid, '🌹 I am analyzing image, be patient! 🌹 ')
 
   # prepare image for downlading
   file_path = bot.get_file(image_id).file_path
