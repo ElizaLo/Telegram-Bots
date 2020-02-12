@@ -27,6 +27,7 @@ def cmd_start(message):
                                       "\n \nHere are some commands: "
                                       "\n🔹 /dialog - start dialog"
                                       "\n🔹 /reset - reset dialog"
+                                      "\n🔹 /recognition - image classification"
                                       "\n🔹 /help")
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIlhV5BcyAnaBGAcJysDmF3JgtghWcIAAKeAQACW90SCDdyny47NvZFGAQ')
 
@@ -77,6 +78,7 @@ def cmd_help(message):
     bot.send_message(message.chat.id, "Here are commands: "
                                       "\n \n🔹 /dialog - start dialog"
                                       "\n🔹 /reset - reset dialog"
+                                      "\n🔹 /recognition - image classification"
                                       "\n🔹 /help")
     dbworker.set_state(message.chat.id, config.States.S_START.value)
 
@@ -130,11 +132,11 @@ def user_sending_location(message):
 # ----------- Recognition ---------------
 
 bot_text = '''
-Bip-bop human,
+Hi once more! 😊
 
-I classify images using neural networks 🚀
+So let's classify images using neural networks ✨
 
-Send me pictures, and I will classify them for you 🤟
+Send any pictures you like and I with Cheshire Cat 🐱 will classify them for you 🙃
 '''
 
 # store files in /tmp so storage does not get complete
@@ -153,7 +155,7 @@ def handle(message):
 
   # object recognition
   object_recognition_image(image_name)
-  bot.send_photo(message.chat.id, open('.data/darknet/predictions.jpg','rb'), 'Identified objects, if any! 👻')
+  bot.send_photo(message.chat.id, open('.data/darknet/predictions.jpg','rb'), 'Identified objects, if any! 😊')
 
   # image classification
   classification_list_result = classify_image(image_name)
@@ -162,7 +164,7 @@ def handle(message):
   output = 'The image classifies as:\n'
   for result in classification_list_result:
     output += result
-  output += '\n🚀 Gimme more pics! 🚀'
+  output += '\n Gimme more pictures! 🌸'
 
   bot.reply_to(message, output)
 
@@ -190,7 +192,7 @@ def save_image_from_message(message):
 
   image_id = get_image_id_from_message(message)
 
-  bot.send_message(cid, '🔥 Analyzing image, be patient ! 🔥')
+  bot.send_message(cid, '🌹 I am nalyzing image, be patient! 🌹 ')
 
   # prepare image for downlading
   file_path = bot.get_file(image_id).file_path
