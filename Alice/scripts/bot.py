@@ -16,7 +16,7 @@ from telebot.types import Message
 
 bot = telebot.TeleBot(config.TOKEN)
 
-#BOT_TOKEN = '1004026853:AAH7TyM-PhWKoR8j0XZcraIyKTIif0pqFbs'
+#BOT_TOKEN = '...'
 
 # bot = telebot.TeleBot(environ['BOT_TOKEN'])
 
