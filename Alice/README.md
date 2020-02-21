@@ -1,5 +1,7 @@
 # Alice in Wonderland Bot (@AliceIRL_bot)
 
+1004026853:AAH7TyM-PhWKoR8j0XZcraIyKTIif0pqFbs
+
 https://glitch.com/edit/#!/telegram-image-classfication-bot?path=bot.py:11:0
 
 https://www.youtube.com/watch?v=S6HVz4p9W3I&feature=share
