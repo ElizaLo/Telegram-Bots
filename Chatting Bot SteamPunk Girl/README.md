@@ -11,7 +11,12 @@ A chatbot in a Telegram that has three possible branches for an answer:
 - [x] **_The bot is answering using failure phrase._**
   - If no answer was found using the two previous options, then one of the automatic failure answers is used.
   
-  
+## Requirements  
+
+- `NLTK`
+- `Sklearn`
+- `Python-telegram-bot`
+
 ## Code Organization
 
     ├── Chat.ipynb                      <- Creating simple chat
@@ -21,5 +26,7 @@ A chatbot in a Telegram that has three possible branches for an answer:
     ├── final_bot_config.py             <- Final version of BOT_CONFIG
     ├── Сlassifier of Intentions.ipynb  <- Different classifier for intentions
 
-    
+## Preview
+
+<img src="https://github.com/ElizaLo/Telegram-Bots/blob/master/Chatting%20Bot%20SteamPunk%20Girl/Chat.png" width="928" height="552">
     
